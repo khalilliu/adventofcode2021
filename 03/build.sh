@@ -15,6 +15,9 @@ make
 if [ "$1" == "run" ]
 then
   ./$2 < input
+elif [ "$1" == "test" ]
+then 
+  ./$2 < input_test
 fi 
 
 
