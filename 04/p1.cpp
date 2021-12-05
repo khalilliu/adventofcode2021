@@ -33,7 +33,6 @@ int main() {
     for(int i=0; i<5; i++) {
       for(int j=0; j<5; j++) {
         int x; cin >> x;
-        cout << x << endl;
         g[m][i][j] = x;
         mp[x].push_back({m, i*5 + j});
       }
