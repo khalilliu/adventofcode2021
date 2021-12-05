@@ -9,4 +9,8 @@ then
   
   cp -r 01 $2
 fi
-  
+
+if [ "$1" == "clean" ]
+then 
+  find ./ -type d -name "build" | xargs rm -r
+fi
