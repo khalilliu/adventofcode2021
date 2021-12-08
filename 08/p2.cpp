@@ -4,20 +4,26 @@
 
 using namespace std;
 const int N = 210, M = 14;
-int w[N][M];
+int w[N][M], ones[1<<7];
 int n;
 
 int lowbit(int x) {
   return x & -x;
 }
 
-int ones(int x) {
+int count(int x) {
   int ans = 0;
   while(x) {
     x -= lowbit(x);
     ans ++;
   }
   return ans;
+}
+
+void init() {
+  for(int i=0; i<(1<<7); i++) {
+    ones[i] = count(i);
+  }
 }
 
 void split(string &s) {
@@ -38,6 +44,7 @@ void split(string &s) {
 }
 
 int main() {
+  init();
   string str;
   while(getline(cin, str)) {
     split(str);
@@ -47,25 +54,26 @@ int main() {
   for(int i=0; i<n; i++) {
     int a[10];
     for(int j=0; j<10; j++) {
-      if(ones(w[i][j]) == 2) a[1] = w[i][j];
-      else if(ones(w[i][j]) == 3) a[7] = w[i][j];
-      else if(ones(w[i][j]) == 7)  a[8] = w[i][j];
+      int t = w[i][j];
+      if(ones[t] == 2) a[1] = t;
+      else if(ones[t] == 3) a[7] = t;
+      else if(ones[t] == 7)  a[8] = t;
     }
     for(int j=0; j<10; j++) {
       int t = w[i][j];
-      if(ones(t^a[1]) == 2) a[4] = t;
+      if(ones[t^a[1]] == 2) a[4] = t;
     }
     for(int j=0; j<10; j++) {
       int t = w[i][j];
-      if(ones(t) == 6) {
-        if(ones(t&a[1]) == 1) a[6] = t;
-        else if(ones(t&a[4]) == 3) a[0] = t;
-        else if(ones(t&a[4]) == 4) a[9] = t;
+      if(ones[t] == 6) {
+        if(ones[t&a[1]] == 1) a[6] = t;
+        else if(ones[t&a[4]] == 3) a[0] = t;
+        else if(ones[t&a[4]] == 4) a[9] = t;
       } 
-      if(ones(t) == 5) {
-        if(ones(t&a[1]) == 2) a[3] = t;
-        else if(ones(t&a[4]) == 3) a[5] = t;
-        else if(ones(t&a[4]) == 2) a[2] = t;
+      if(ones[t] == 5) {
+        if(ones[t&a[1]] == 2) a[3] = t;
+        else if(ones[t&a[4]] == 3) a[5] = t;
+        else if(ones[t&a[4]] == 2) a[2] = t;
       }
     }
     for(int j=0; j<10; j++) cout << a[j] << ' ';
