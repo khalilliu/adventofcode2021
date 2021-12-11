@@ -7,8 +7,8 @@
 
 using namespace std;
 typedef pair<int, int>PII;
-int dx[8] = {-1, -1, -1, 0, 0, 1, 1, 1}, dy[8] = {-1, 0, 1, -1, 1, -1, 0, 1};
 const int N = 15;
+int dx[8] = {-1, -1, -1, 0, 0, 1, 1, 1}, dy[8] = {-1, 0, 1, -1, 1, -1, 0, 1};
 int g[N][N];
 bool st[N][N];
 int n, m;
