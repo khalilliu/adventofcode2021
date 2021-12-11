@@ -41,6 +41,7 @@ int main() {
   while(true) {
     memset(st, 0, sizeof st);
     queue<PII> q;
+    int cnt = 0;
     for(int i=0; i<n; i++) {
       for(int j=0; j<m; j++) {
         g[i][j] += 1;
@@ -48,7 +49,8 @@ int main() {
       }
     }
     while(q.size()) {
-      auto t =  q.front(); q.pop();
+      auto t = q.front(); q.pop();
+      cnt ++;
       st[t.x][t.y] = true, g[t.x][t.y] = 0;
       for(int i=0; i<8; i++) {
         int a = t.x + dx[i], b = t.y + dy[i];
@@ -57,13 +59,7 @@ int main() {
         if(g[a][b] == 10) q.push({a, b}), st[a][b] = true;
       }
     }
-    bool flag = true;
-    for(int i=0; i<n; i++) {
-      for(int j=0; j<m; j++) {
-        if(!st[i][j]) flag = false;
-      }
-    }
-    if(flag) break;
+    if(cnt == n*m) break;
     res ++;
   }
 
