@@ -11,7 +11,7 @@ using namespace std;
 typedef pair<int, int> PII;
 set<PII> pts;
 vector<PII> folds;
-char g[45][45];
+char g[25][45];
 
 int main() {
   string str;
@@ -37,28 +37,27 @@ int main() {
       if(x == 0 && p.y > y) {
         tmp.insert({p.x, y - (p.y - y)});
       }
-      if(y == 0 && p.x > x) {
+      else if(y == 0 && p.x > x) {
         tmp.insert({x - (p.x - x), p.y});
       } 
-      if(x == 0 && p.y < y || y == 0 && p.x < x)
-        tmp.insert({p.x, p.y});
+      else tmp.insert({p.x, p.y});
     }
     pts = tmp;
   }
   for(int i=0; i<40; i++) {
-    for(int j=0; j<40; j++) {
-      g[i][j] = ' ';
-    }
+      for(int j=0; j<40; j++) {
+          g[i][j] = ' ';
+      }
   }
   for(auto &p : pts) {
-    g[p.y][p.x] = '#';
+      g[p.y][p.x] = '#';
   }
 
-  for(int i=0; i<40; i++) {
-    for(int j=0; j<40; j++) {
-      cout << g[i][j] ;
-    }
-    cout << endl;
+  for(int i=0; i<25; i++) {
+      for(int j=0; j<40; j++) {
+          cout << g[i][j] ;
+      }
+      cout << endl;
   }
 
   return 0;
