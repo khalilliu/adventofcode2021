@@ -30,8 +30,8 @@ int main() {
         for(auto &p : pirs) {
             string k = p.first;
             LL v = p.second;
-            auto t1 = k.substr(0, 1) + dict[k];
-            auto t2 = dict[k] + k.substr(1);
+            auto t1 = k[0] + dict[k];
+            auto t2 = dict[k] + k[1];
             tmp[t1] += v, tmp[t2] += v;
         }
         pirs = tmp;
