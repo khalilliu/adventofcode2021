@@ -1,59 +1,58 @@
 #include <iostream>
-#include <cstring>
 #include <algorithm>
+#include <cstring>
 #include <unordered_map>
 
 using namespace std;
 typedef long long LL;
 
-unordered_map<string, string> dict;
-unordered_map<string, LL> pirs, tmp;
 const LL INF = 1e18;
+
+unordered_map<string,string> mp;
+unordered_map<string, LL> cur, tmp;
 string start;
+LL cnt[26];
+int n;
 
 int main() {
     string s;
-    getline(cin, start);
+    cin >> start;
     getline(cin, s);
     while(getline(cin, s)) {
         char a[5], b[5];
         sscanf(s.c_str(), "%s -> %s", a, b);
-        dict[string(a)] = string(b);
+        mp[string(a)] = string(b);
     }
 
-    for(int i=0; i<start.size()-1; i++) {
-        pirs[start.substr(i,2)] ++;
-    }
+    n = start.size();
+    for(int i=0; i<n-1; i++) cur[start.substr(i, 2)]++;
 
-    for(int step = 0; step < 40; step++) {
+    int T = 40;
+    while(T--) {
         tmp.clear();
-        for(auto &p : pirs) {
-            string k = p.first;
-            LL v = p.second;
-            auto t1 = k[0] + dict[k];
-            auto t2 = dict[k] + k[1];
-            tmp[t1] += v, tmp[t2] += v;
+        for(auto &p : cur) {
+            if(mp.count(p.first)) {
+                tmp[p.first[0] + mp[p.first]] += p.second;
+                tmp[mp[p.first] + p.first[1]] += p.second;
+            } else tmp[p.first] = p.second;
         }
-        pirs = tmp;
+        cur = tmp;
     }
 
-    unordered_map<int, LL> cnt;
-
-    for(auto &p : pirs) {
-        string k = p.first;
-        LL v = p.second;
-        cnt[k[0] - 'A'] += v;  
+    for(auto &p : cur) {
+        cnt[p.first[0] - 'A'] += p.second;
     }
 
-    cnt[start[start.size()-1] - 'A']++;
+    cnt[start[n-1]-'A'] ++;
 
     LL minv = INF, maxv = 0;
-    for(auto &p : cnt) {
-        LL v = p.second;
-        minv = min(v, minv);
-        maxv = max(v, maxv);
+    for(int i=0; i<26; i++) {
+        if(cnt[i] == 0) continue;
+        minv = min(minv, cnt[i]);
+        maxv = max(maxv, cnt[i]);
     }
-    cout << maxv - minv << endl;
 
+    printf("answer is equal to %lld\n", maxv - minv);
     return 0;
+
 }
