@@ -23,15 +23,6 @@ void split(string &s) {
   n++;
 }
 
-void print() {
-  for(int i=0; i<n*5; i++) {
-    for(int j=1; j<m*5; j++) {
-      cout << g[i][j];
-    }
-    cout << endl;
-  }
-}
-
 int get(int x, int y) {
     int t = g[x%n][y%m] + x/n + y/m;
     return t > 9 ? t%9 : t;
