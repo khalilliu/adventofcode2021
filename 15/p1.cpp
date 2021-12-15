@@ -17,41 +17,30 @@ int n, m;
 
 void split(string &s) {
   if(!m) m = s.size();
-  for(int i=1; i<=m; i++) {
-    g[n][i] = s[i - 1] - '0';
+  for(int i=0; i<m; i++) {
+    g[n][i] = s[i] - '0';
   }
   n++;
 }
 
-void print() {
-  for(int i=1; i<=n*5; i++) {
-    for(int j=1; j<=m*5; j++) {
-      cout << g[i][j];
-    }
-    cout << endl;
-  }
-}
-
 void init() {
-  n = 1, m = 0;
   string s;
   while(getline(cin, s)) {
     split(s);
   }
-  n--;
 }
 
 void spfa() { 
   memset(dist, 0x3f, sizeof dist);
-  q.push({1, 1});
-  dist[1][1] = 0;
-  st[1][1] = true;
+  q.push({0, 0});
+  dist[0][0] = 0;
+  st[0][0] = true;
   while(q.size()) {
     auto t = q.front(); q.pop();
     st[t.x][t.y] = false;
     for(int i=0; i<4; i++) {
       int a = t.x + dx[i], b = t.y + dy[i];
-      if(a < 1 || a > n || b < 1 || b > m) continue;
+      if(a < 0 || a >= n || b < 0 || b >= m) continue;
       if(dist[a][b] > dist[t.x][t.y] + g[a][b]) {
         dist[a][b] = dist[t.x][t.y] + g[a][b];
         if(!st[a][b]) {
@@ -67,6 +56,6 @@ void spfa() {
 int main() {
   init();
   spfa();
-  cout << dist[n][m] << endl;
+  cout << dist[n-1][m-1] << endl;
   return 0;
 }
