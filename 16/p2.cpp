@@ -22,85 +22,80 @@ int get(string &s, int k) {
   return ans;
 }
 
-int getVersion(string &s) {
-  return get(s, 3);
-}
 
-int getType(string &s) {
-  return get(s, 3);
-}
-
-LL getVarint(string &s) {
+LL getVal(string &s) {
   LL res = 0;
   int k;
-  do {
+  while(true) {
     k = get(s, 5);
-    res = (res << 4) + (k & 0xF);
-  } while(k & 0x10);
+    if((k >> 4 & 1) == 0) break;
+    res = (res << 4) + (k & 15);
+  }
+  res = (res << 4) + (k & 15);
   return res;
 }
 
 LL parse(string &s) {
-  getVersion(s);
-  int typ = getType(s);
+    get(s, 3);
+    int typ = get(s, 3);
 
-  if(typ == 4) {
-    return getVarint(s);
-  } 
+    if(typ == 4) {
+        return getVal(s);
+    } 
 
-  int lid = get(s, 1);
+    int lid = get(s, 1);
 
-  vector<LL> nums;
+    vector<LL> nums;
 
-  if(lid == 0) {
-    int a = get(s, 15);
-    string sub = s.substr(0, a);
-    s = s.substr(a);
+    if(lid == 0) {
+        int a = get(s, 15);
+        string sub = s.substr(0, a);
+        s = s.substr(a);
 
-    while(!sub.empty()) {
-      nums.push_back(parse(sub));
+        while(!sub.empty()) {
+            nums.push_back(parse(sub));
+        }
+    } else if(lid == 1) {
+        int a = get(s, 11);
+        for(int i=0; i<a; i++) {
+            nums.push_back(parse(s));
+        }
     }
-  } else if(lid == 1) {
-    int a = get(s, 11);
-    for(int i=0; i<a; i++) {
-      nums.push_back(parse(s));
-    }
-  }
 
-  if(typ == 0) {
-    LL res = 0;
-    for(auto &v : nums) res += v;
-    return res;
-  } else if(typ == 1) {
-    LL res = 1;
-    for(auto &v : nums) res *= v;
-    return res;
-  } else if(typ == 2) {
-    LL res = 1e18;
-    for(auto &v : nums) res = min(res, v);
-    return res;
-  } else if(typ == 3) {
-    LL res = 0;
-    for(auto &v : nums) res = max(res, v);
-    return res;
-  } else if(typ == 5) {
-    return nums[0] > nums[1] ? 1 : 0;
-  } else if(typ == 6) {
-    return nums[0] < nums[1] ? 1 : 0; 
-  } else if(typ == 7) {
-    return nums[0] == nums[1] ? 1 : 0;
-  }
-  return 0;
+    if(typ == 0) {
+        LL res = 0;
+        for(auto &v : nums) res += v;
+        return res;
+    } else if(typ == 1) {
+        LL res = 1;
+        for(auto &v : nums) res *= v;
+        return res;
+    } else if(typ == 2) {
+        LL res = 1e18;
+        for(auto &v : nums) res = min(res, v);
+        return res;
+    } else if(typ == 3) {
+        LL res = 0;
+        for(auto &v : nums) res = max(res, v);
+        return res;
+    } else if(typ == 5) {
+        return nums[0] > nums[1] ? 1 : 0;
+    } else if(typ == 6) {
+        return nums[0] < nums[1] ? 1 : 0; 
+    } else if(typ == 7) {
+        return nums[0] == nums[1] ? 1 : 0;
+    }
+    return 0;
 }
 
 
 int main() {
-  string s;
-  cin >> s;
-  string res;
-  for(auto &c : s) res += mp[c];
-  LL ans = parse(res);
-  printf("%lld\n", ans);
-  return 0;
+    string s;
+    cin >> s;
+    string res;
+    for(auto &c : s) res += mp[c];
+    LL ans = parse(res);
+    printf("%lld\n", ans);
+    return 0;
 }
 

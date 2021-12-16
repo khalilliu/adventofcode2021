@@ -5,6 +5,7 @@
 #include <unordered_map>
 
 using namespace std;
+typedef long long LL;
 unordered_map<char, string> mp = {
   {'0', "0000"}, {'1', "0001"}, {'2', "0010"}, {'3', "0011"},
   {'4', "0100"}, {'5', "0101"}, {'6', "0110"}, {'7', "0111"},
@@ -21,36 +22,31 @@ int get(string &s, int k) {
   return ans;
 }
 
-int getVersion(string &s) {
-  return get(s, 3);
-}
-
-int getType(string &s) {
-  return get(s, 3);
-}
-
-int getVarint(string &s) {
-  int res = 0, k;
-  do {
+LL getVal(string &s) {
+  LL res = 0;
+  int k;
+  while(true){
     k = get(s, 5);
-    res = (res << 4) + (k & 0xF);
-  } while(k & 0x10);
+    if(k >> 4 & 1) {
+        res = (res << 4) + (k & 15);
+    } else break;
+  }
+
+  res = (res << 4) + (k & 15);
   return res;
 }
 
-int parse(string &s) {
-  int ver = getVersion(s);
-  int typ = getType(s);
+LL parse(string &s) {
+  int ver = get(s, 3);
+  int typ = get(s, 3);
 
-  int sum = ver;
+  LL sum = ver;
   if(typ == 4) {
-    getVarint(s);
+    getVal(s);
   } else {
     int lid = get(s, 1);
-    printf("lid : %d\n", lid);
     if(lid == 0) {
       int a = get(s, 15);
-      printf("length of sub-packet: %d\n", a);
       string sub = s.substr(0, a);
       s = s.substr(a);
       while(!sub.empty()) {
@@ -72,7 +68,6 @@ int main() {
   cin >> s;
   string res;
   for(auto &c : s) res += mp[c];
-  cout << res << endl;
   int ans = parse(res);
   cout << ans << endl;
   return 0;
