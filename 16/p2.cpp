@@ -5,7 +5,7 @@
 #include <unordered_map>
 
 using namespace std;
-typedef unsigned long long ULL;
+typedef long long LL;
 unordered_map<char, string> mp = {
   {'0', "0000"}, {'1', "0001"}, {'2', "0010"}, {'3', "0011"},
   {'4', "0100"}, {'5', "0101"}, {'6', "0110"}, {'7', "0111"},
@@ -30,8 +30,8 @@ int getType(string &s) {
   return get(s, 3);
 }
 
-ULL getVarint(string &s) {
-  ULL res = 0;
+LL getVarint(string &s) {
+  LL res = 0;
   int k;
   do {
     k = get(s, 5);
@@ -40,7 +40,7 @@ ULL getVarint(string &s) {
   return res;
 }
 
-ULL parse(string &s) {
+LL parse(string &s) {
   getVersion(s);
   int typ = getType(s);
 
@@ -50,7 +50,7 @@ ULL parse(string &s) {
 
   int lid = get(s, 1);
 
-  vector<ULL> nums;
+  vector<LL> nums;
 
   if(lid == 0) {
     int a = get(s, 15);
@@ -68,19 +68,19 @@ ULL parse(string &s) {
   }
 
   if(typ == 0) {
-    ULL res = 0;
+    LL res = 0;
     for(auto &v : nums) res += v;
     return res;
   } else if(typ == 1) {
-    ULL res = 1;
+    LL res = 1;
     for(auto &v : nums) res *= v;
     return res;
   } else if(typ == 2) {
-    ULL res = 1e18;
+    LL res = 1e18;
     for(auto &v : nums) res = min(res, v);
     return res;
   } else if(typ == 3) {
-    ULL res = 0;
+    LL res = 0;
     for(auto &v : nums) res = max(res, v);
     return res;
   } else if(typ == 5) {
@@ -99,7 +99,7 @@ int main() {
   cin >> s;
   string res;
   for(auto &c : s) res += mp[c];
-  ULL ans = parse(res);
+  LL ans = parse(res);
   printf("%lld\n", ans);
   return 0;
 }
