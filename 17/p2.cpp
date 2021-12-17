@@ -4,7 +4,6 @@
 
 using namespace std;
 
-typedef pair<int, int> PII;
 
 int xmin, xmax, ymin, ymax;
 int ans;
