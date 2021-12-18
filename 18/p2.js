@@ -151,7 +151,7 @@ function get_val(a, b) {
 }
 
 function main() {
-  let input = getInput('./input.txt')
+  let input = getInput('./input')
   let ps = input.map(parse);
   let ans = 0;
   temp = nodes.map(node => (Object.assign({}, node)))
