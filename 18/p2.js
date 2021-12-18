@@ -1,6 +1,5 @@
 
 const fs = require('fs');
-const { get } = require('http');
 
 function getInput(filename) {
   var arr = fs.readFileSync(filename).toString().split('\n').filter(Boolean)
@@ -23,7 +22,6 @@ function find(root, depth) {
 }
 
 function add_left(node, val) {
-  //   console.log(nodes[node])
   if (!nodes[node].is_left) {
     let p = nodes[node].parent;
     if (nodes[nodes[p].left].is_leaf) nodes[nodes[p].left].val += val;
@@ -61,8 +59,6 @@ function add_right(node, val) {
 function explode(root) {
   let node = find(root, 4)
   if (node == -1) return false;
-  //   console.log(nodes[nodes[node].left], nodes[nodes[node].right]);
-  //   return;
   add_left(node, nodes[nodes[node].left].val);
   add_right(node, nodes[nodes[node].right].val);
   nodes[node].left = -1, nodes[node].right = -1;
@@ -94,10 +90,8 @@ function split(root) {
 function clear(root) {
   while (true) {
     let has_change = explode(root)
-    //         if(has_change) console.log(stringify(root));
     if (has_change) continue
     has_change = split(root)
-    //         if(has_change) console.log(stringify(root));
     if (!has_change) break;
   }
 }
