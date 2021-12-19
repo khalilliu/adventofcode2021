@@ -1,105 +1,155 @@
 #include <iostream>
-#include <cstring>
 #include <algorithm>
-#include <vector>
+#include <cstring>
 #include <stack>
 
 using namespace std;
 
-struct PII {
-    PII *left, *right, *parent;
-    int val, depth;
-    bool is_leaf;
-};
+const int N = 100010;
 
-vector<PII> ps;
+int l[N], r[N], p[N], w[N], idx;
+bool is_leaf[N], is_left[N];
+int h[N], n;
 
-// bool explode(PII &p) {
-//     auto root = p;
+int find(int root, int depth) {
+    if(root == -1) return root;
+    if(depth == 0) {
+        if(!is_leaf[root]) return root;
+        else return -1;
+    }
+    int node = find(l[root], depth-1);
+    if(node != -1) return node;
+    return find(r[root], depth-1);
+}
 
-// }
+void add_left(int node, int val) {
+    if(!is_left[node]) {
+        int p_node = p[node];
+        if(is_leaf[l[p_node]]) w[l[p_node]] += val;
+        else {
+            int p_right = r[l[p_node]];
+            while(!is_leaf[p_right]) p_right = r[p_right];
+            w[p_right] += val;
+        }
+    } else {
+        int p_node = p[node];
+        while(p_node != -1 && is_left[p_node]) p_node = p[p_node];
+        if(p_node == -1 || p[p_node] == -1) return;
+        add_left(p_node, val);
+    }
+}
 
-// bool split(PII &p) {
-//     if(p->is_leaf) {
-//         if(p->val >= 10) {
-//             p->left = PII{null, null, p, p->val/2, p->depth+1, true};
-//             p->right = PII{null, null, p, (p->val+1)/2, p->depth+1, true};
-//             return true;
-//         }
-//         return false;
-//     }
-    
-//     auto hasChange = split(p->left);
-//     if(hasChange) {
-//         return true;
-//     }
-//     hasChange = split(p->right);
-//     return hasChange;
-// }
+void add_right(int node, int val) {
+    if(is_left[node]) {
+        int p_node = p[node];
+        if(is_leaf[r[p_node]]) w[r[p_node]] += val;
+        else {
+            int p_left = l[r[p_node]];
+            while(!is_leaf[p_left]) p_left = l[p_left];
+            w[p_left] += val;
+        }
+    } else {
+        int p_node = p[node];
+        while(p_node != -1 && !is_left[p_node]) p_node = p[p_node];
+        if(p_node == -1 || p[p_node] == -1) return;
+        add_right(p_node, val);
+    }
+}
 
-// void addup(PII &p){
-//     while(true){
-//         auto hasChange = explode(p);
-//         if(hasChange) continue;
-//         hasChange = split(p);
-//         if(!hasChange) break;
-//     }
-// }
+bool explode(int root) {
+    int node = find(root, 4);
+    if(node == -1) return false;
+    add_left(node, w[l[node]]), add_right(node, w[r[node]]);
+    l[node] = r[node] = -1;
+    w[node] = 0, is_leaf[node] = true;
+    return true;
+}
 
-// PII add(PII &a, PII &b) {
-//     PII ans;
-//     ans->left = *a, a->right = *b;
-//     a->parent = *ans, b->parent = *ans;
-//     a->depth += 1, b->depth += 1;
-//     ans->depth = 0;
-//     // clear the ans
-//     addup(ans);
-//     return ans;
-// }
+bool split(int root) {
+    if(is_leaf[root]) {
+        if(w[root] >= 10) {
+            w[++idx] = w[root] / 2, l[root] = idx, p[idx] = root, is_leaf[idx] = true, is_left[idx] = true;
+            w[++idx] = (w[root] + 1)/2, r[root] = idx, p[idx] = root, is_leaf[idx] = true, is_left[idx] = false;
+            w[root] = 0, is_leaf[root] = false;
+            return true;
+        } 
+        return false;
+    }
+    auto has_changed = split(l[root]);
+    if(has_changed) return true;
+    has_changed = split(r[root]);
+    return has_changed;
+}
 
-// int magnitude(PII &root) {
-//     if(root->is_leaf) {
-//         return root->val;
-//     }
-//     return 3 * magnitude(root->left) + 2 * magnitude(root->right);
-// }
+void do_clear(int root) {
+    while(true) {
+        bool has_changed = explode(root);
+        if(has_changed) continue;
+        has_changed = split(root);
+        if(!has_changed) break;
+    }
+}
 
+int add(int a, int b) {
+    idx++;
+    l[idx] = a, r[idx] = b, p[a] = idx, p[b] = idx;
+    is_left[a] = true, is_left[b] = false;
+    int root = idx;
+    do_clear(root);
+    return root;
+}
 
-PII parse(string &s) {
-    stack<PII> stk;
-    int depth = 0;
+int magnitude(int root) {
+    if(is_leaf[root]) return w[root];
+    return 3 * magnitude(l[root]) + 2 * magnitude(r[root]);
+}
+
+void init(){
+    idx = -1;
+    memset(l, -1, sizeof l);
+    memset(r, -1, sizeof r);
+    memset(p, -1, sizeof p);
+    memset(w, 0, sizeof w);
+    memset(is_leaf, 0, sizeof is_leaf);
+    memset(is_left, 0, sizeof is_left);
+}
+
+int parse(string &s) {
+    stack<int> stk;
     for(int i=0; i<s.size(); i++) {
         if(s[i] == ']') {
-            PII cur; 
-            cout << stk.size() << endl;
-            auto r = stk.top(); stk.pop();
-            auto l = stk.top(); stk.pop();
-            *cur.left = l, *cur.right = r, cur.is_leaf = false;
-            *l.parent = cur, *r.parent = cur;
-            cur.depth = l.depth-1;
-            depth--;
-            stk.push(cur);
-        } else if(s[i] == '[') {depth++;}
-        else if(s[i] >= '0' && s[i] <= '9') {
-            PII cur = {nullptr, nullptr, nullptr, s[i] - '0', depth, true};
-            stk.push(cur);
+            auto b = stk.top(); stk.pop();
+            auto a = stk.top(); stk.pop();
+            idx++;
+            l[idx] = a, r[idx] = b, p[a] = idx, p[b] = idx;
+            is_left[a] = true;
+            stk.push(idx);
+        } else if(s[i] >= '0' && s[i] <= '9') {
+            w[++idx] = s[i] - '0', is_leaf[idx] = true;
+            stk.push(idx);
         }
     }
     return stk.top();
 }
 
+string stringify(int root) {
+    if(is_leaf[root]) {
+        return to_string(w[root]);
+    } 
+    return '[' +  stringify(l[root]) + ',' + stringify(r[root]) + ']';
+}
+
 int main() {
+    init();
     string s;
     while(getline(cin, s)) {
-        auto t = parse(s);
-        ps.push_back(t);
+        h[n++] = parse(s);
     }
-    cout << "done" << endl;
-    // cout << ps[0].val << endl;
-//    PII ans = ps[0];
-//    for(int i=1; i<ps.size(); i++) {
-//        ans = add(ans, ps[i]);
-//   }
-//   cout << magnitude(ans) << endl;
+    int root = h[0];
+    for(int i=1; i<n; i++) {
+       root = add(root, h[i]);
+    }
+    int res = magnitude(root);
+    cout << res << endl;
     return 0;
 }
