@@ -9,8 +9,8 @@ else
 fi
 
 cd ./build
-cmake ..
-make
+cmake -Wno-dev ..
+make 
 
 if [ "$1" == "run" ]
 then
