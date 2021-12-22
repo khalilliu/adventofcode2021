@@ -8,14 +8,11 @@ using namespace std;
 
 typedef long long LL;
 typedef pair<int, int> PII;
-typedef pair<PII, int> PPI;
 int a1, a2, b1, b2, c1, c2;
 vector<int> numsA, numsB, numsC;
 vector<PII> A, B, C;
 vector<int> st;
 char statue[10];
-set<PPI> S;
-
 
 int get(int x, vector<int> &nums) {
     return lower_bound(nums.begin(), nums.end(), x) - nums.begin();
@@ -38,7 +35,8 @@ int main() {
     numsB.erase(unique(numsB.begin(), numsB.end()), numsB.end());
     numsC.erase(unique(numsC.begin(), numsC.end()), numsC.end());
 
-
+    int N = numsA.size(), M = numsB.size(), K = numsC.size();
+    vector<vector<vector<int>>> g(N, vector<vector<int>>(M, vector<int>(K, 0)));
 
     for(int i=0; i<st.size(); i++) {
         int a1 = get(A[i].first, numsA), a2 = get(A[i].second, numsA); 
@@ -47,20 +45,21 @@ int main() {
         for(int x=a1; x<a2; x++) {
             for(int y=b1; y<b2; y++) {
                 for(int z=c1; z<c2; z++) {
-                    if(st[i]) S.insert({{x, y}, z});
-                    else S.erase({{x, y}, z});
+                    g[x][y][z] = st[i];
                 }
             }
         }
     }
 
-    LL ans = 0; 
+    LL ans = 0;     
 
-    cout << numsA.size() << ' ' << numsB.size() << ' ' << numsC.size() << endl;
-    for(auto &p : S) {
-        int i = p.first.first, j = p.first.second, k = p.second;
-        int x = numsA[i+1] - numsA[i], y = numsB[j+1] - numsB[j], z = numsC[k+1] - numsC[k];
-        ans += (LL)x*y*z;
+    for(int i=0; i<N-1; i++) {
+        for(int j=0; j<M-1; j++ ){
+            for(int k=0; k<K-1; k++) {
+                if(g[i][j][k] == 0) continue;
+                ans += (LL)g[i][j][k] * (numsA[i+1]-numsA[i]) * (numsB[j+1]-numsB[j]) * (numsC[k+1]-numsC[k]);
+            }
+        }
     }
 
     cout << ans << endl;
