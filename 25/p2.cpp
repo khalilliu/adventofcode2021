@@ -31,7 +31,6 @@ void read_input() {
 int main() {
     read_input();
     int ans = 1;
-    bool flag = false;
     while(true) {
         bool has_moved = false;
         set<PII> tmp_left, tmp_down;
